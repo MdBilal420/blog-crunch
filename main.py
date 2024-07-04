@@ -7,13 +7,14 @@ st.set_page_config(
 )
 
 st.title("Blog Crunch")
+st.write("For all of your tech blogs with their summaries.")
 
 openai_api_key = st.sidebar.text_input(
     "OpenAI API Key",
     type = "password"
 )
 
-tab1, tab2= st.tabs(["Generator", "Summarizer"])
+
 
 
 def generate_blog(topic):
@@ -34,7 +35,7 @@ def generate_blog(topic):
 
     query = prompt.format(topic=topic)
     response = llm(query, max_tokens=2048)
-    return st.write(response)
+    return response
 
 def summarize_text(text):
     llm = OpenAI(openai_api_key=openai_api_key)
@@ -47,23 +48,25 @@ def summarize_text(text):
     )
     query = prompt.format(text=text)
     response = llm(query, max_tokens=2048)
-    return st.write(response)
+    return response
 
 
+
+topic_text = st.text_input("Enter topic: ")
+blog = generate_blog(topic_text)
+
+tab1, tab2= st.tabs(["Full Blog", "Blog Summary"])
 
 with tab1:
-    topic_text = st.text_input("Enter topic: ")
-
     if(not openai_api_key):
         st.warning("Please enter API key")
     else:
-        generate_blog(topic_text)
+        st.write(blog)
 
 
 with tab2:
-    summary_text = st.text_area("Enter text: ")
-
     if(not openai_api_key):
         st.warning("Please enter API key")
     else:
-        summarize_text(summary_text)
+        summary = summarize_text(blog)
+        st.write(summary)
